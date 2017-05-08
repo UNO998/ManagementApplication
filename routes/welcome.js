@@ -75,7 +75,7 @@ function userExist(req, res, next) {
 router.get("/", function (req, res) {
 
     if (req.session.user) {
-        res.send("Welcome " + req.session.user.username + "<br>" + "<a href='/login/logout'>logout</a>");
+        res.send("Welcome " + req.session.user.username + "<br>" + "<a href='/welcome/logout'>logout</a>");
     } else {
         res.send("<a href='/welcome/login'> Login</a>" + "<br>" + "<a href='/welcome/signup'> Sign Up</a>");
     }
@@ -83,7 +83,7 @@ router.get("/", function (req, res) {
 
 router.get("/signup", function (req, res) {
     if (req.session.user) {
-        res.redirect("/");
+        res.redirect("/welcome");
     } else {
         res.render("signup");
     }
@@ -105,8 +105,8 @@ router.post("/signup", userExist, function (req, res) {
                 if(user){
                     req.session.regenerate(function(){
                         req.session.user = user;
-                        req.session.success = 'Authenticated as ' + user.username + ' click to <a href="/welcome/logout">logout</a>. ' + ' You may now access <a href="/login/restricted">/restricted</a>.';
-                        res.redirect('..');
+                        req.session.success = 'Authenticated as ' + user.username + ' click to <a href="/welcome/logout">logout</a>. ' + ' You may now access <a href="/welcome/restricted">/restricted</a>.';
+                        res.redirect('/welcome');
                     });
                 }
             });
@@ -126,30 +126,25 @@ router.post("/login", function (req, res) {
 
                 req.session.user = user;
                 req.session.success = 'Authenticated as ' + user.username + ' click to <a href="/welcome/logout">logout</a>. ' + ' You may now access <a href="/welcome/restricted">/restricted</a>.';
-                res.redirect('/');
+                res.redirect('/welcome');
             });
         } else {
             req.session.error = 'Authentication failed, please check your ' + ' username and password.';
-            res.redirect('/welcome');
+            res.redirect('/welcome/login');
         }
     });
+
 });
 
 router.get('/logout', function (req, res) {
     req.session.destroy(function () {
-        res.redirect('/');
+        res.redirect('/welcome');
     });
 });
 
 router.get('/profile', requiredAuthentication, function (req, res) {
-    res.send('Profile page of '+ req.session.user.username +'<br>'+' click to <a href="/login/logout">logout</a>');
+    res.send('Profile page of '+ req.session.user.username +'<br>'+' click to <a href="/welcome/logout">logout</a>');
 });
 
-
-
-// /* GET users listing. */
-// router.get('/', function(req, res, next) {
-//     res.send('respond with a resource');
-// });
 
 module.exports = router;
